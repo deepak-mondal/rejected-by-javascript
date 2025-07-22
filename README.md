@@ -1,2 +1,2 @@
 # rejected-by-javascript
-So... I got rejected in my JS interview. Yep. Once again by an event loop.
+So... got rejected in JS interview. Once again by an event loop.
