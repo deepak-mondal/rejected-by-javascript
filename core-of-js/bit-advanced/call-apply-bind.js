@@ -272,31 +272,30 @@ boundIntroduce(); // Output: Hello, I'm Eve. (`this` is permanently bound to `pr
 console.log("\n--- `bind()` Advanced Example 1: Event Listeners (Conceptual) ---");
 
 // This is conceptual for a browser environment.
-/*
+
 const appController = {
-  count: 0,
-  button: null, // Assume this is a DOM button element
+	count: 0,
+	button: null, // Assume this is a DOM button element
 
-  init: function() {
-    this.button = document.getElementById('myButton');
-    if (this.button) {
-      // Problem: `this` inside handleClick would refer to the button, not `appController`.
-      // this.button.addEventListener('click', this.handleClick);
+	init: function () {
+		this.button = document.getElementById("myButton");
+		if (this.button) {
+			// Problem: `this` inside handleClick would refer to the button, not `appController`.
+			// this.button.addEventListener('click', this.handleClick);
 
-      // Solution with `bind`: create a new function where `this` is always `appController`.
-      this.button.addEventListener('click', this.handleClick.bind(this));
-      console.log("Event listener attached with bound `this`.");
-    }
-  },
+			// Solution with `bind`: create a new function where `this` is always `appController`.
+			this.button.addEventListener("click", this.handleClick.bind(this));
+			console.log("Event listener attached with bound `this`.");
+		}
+	},
 
-  handleClick: function() {
-    this.count++;
-    console.log(`Button clicked! Count: ${this.count}`); // `this` correctly refers to `appController`
-  }
+	handleClick: function () {
+		this.count++;
+		console.log(`Button clicked! Count: ${this.count}`); // `this` correctly refers to `appController`
+	},
 };
 
 // appController.init(); // Call this to initialize in a browser environment
-*/
 
 /*
  * Advanced Example 2: Binding `this` in `setTimeout` callbacks
