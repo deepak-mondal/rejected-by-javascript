@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Script Loading Mechanisms</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Basic styling for readability */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #2980b9;
+            margin-top: 40px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 5px;
+        }
+
+        p {
+            margin-bottom: 10px;
+        }
+
+        .section-container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .code-snippet {
+            background-color: #ecf0f1;
+            border-left: 44px solid #34495e;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .output-box {
+            border: 1px dashed #a0aec0;
+            padding: 15px;
+            margin-top: 20px;
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            min-height: 50px; /* Ensure visibility even if empty */
+        }
+
+        .important-note {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffe082;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            color: #664d03;
+        }
+    </style>
+</head>
+<body>
+    <h1>JavaScript Script Loading Mechanisms</h1>
+
+    <div class="section-container">
+        <p>The way you include JavaScript files in your HTML can significantly impact your page's loading performance and user experience. The `&lt;script&gt;` tag offers different attributes to control when and how the browser fetches and executes your scripts.</p>
+        <p>Below, we'll explore three main loading mechanisms: **standard (blocking)**, **`async`**, and **`defer`**.</p>
+        <div class="important-note">
+            <strong>Important Note:</strong> To best observe the differences, open your browser's developer tools (usually F12 or Cmd+Option+I), go to the "Console" tab, and reload the page. Pay attention to the order of `console.log` messages. You might also want to simulate a slow network connection in the "Network" tab.
+        </div>
+    </div>
+
+    ---
+
+    <h2>1. Standard (Blocking) Script Loading</h2>
+    <div class="section-container">
+        <p>When a `&lt;script&gt;` tag is encountered without `async` or `defer` attributes, the browser's HTML parser **pauses** its parsing of the HTML document.</p>
+        <ul>
+            <li>The script is **fetched** from the network.</li>
+            <li>The script is then **executed**.</li>
+            <li>Only after the script has finished executing does the HTML parser **resume** parsing the rest of the document.</li>
+        </ul>
+        <p>This can lead to a "white screen" effect or a delayed display of content, especially for large scripts, as the browser waits for the script to download and run before rendering more of the page.</p>
+
+        <h3>Example Code:</h3>
+        <div class="code-snippet">
+            &lt;!-- In the &lt;head&gt; or &lt;body&gt; --&gt;<br>
+            &lt;script src="blocking-script.js"&gt;&lt;/script&gt;<br>
+            &lt;div id="output-blocking" class="output-box"&gt;<br>
+            &nbsp;&nbsp;Output from Blocking Script:<br>
+            &lt;/div&gt;
+        </div>
+        <div id="output-blocking" class="output-box">
+            Output from Blocking Script:
+        </div>
+
+        <script>
+            /*
+             * This script simulates a blocking external JavaScript file.
+             * In a real scenario, this would be a separate file (e.g., blocking-script.js).
+             * We're simulating its behavior directly here for demonstration.
+             */
+            console.log("Blocking Script: Started fetching/execution.");
+
+            // Simulate a long-running synchronous task (e.g., complex calculation)
+            const blockingStartTime = performance.now();
+            while (performance.now() - blockingStartTime < 500) {
+                // This loop blocks the main thread for 500ms
+            }
+
+            const blockingOutputDiv = document.getElementById('output-blocking');
+            if (blockingOutputDiv) {
+                blockingOutputDiv.innerHTML += "<br>Blocking Script: DOM content available (but parsing paused).";
+            }
+            console.log("Blocking Script: Finished execution. HTML parsing resumes now.");
+        </script>
+        <p>This paragraph appears *after* the blocking script has fully executed.</p>
+    </div>
+
+    ---
+
+    <h2>2. `async` Script Loading</h2>
+    <div class="section-container">
+        <p>The `async` attribute tells the browser to **fetch the script asynchronously** (in parallel with HTML parsing) and **execute it as soon as it's downloaded**, without waiting for the HTML parsing to complete.</p>
+        <ul>
+            <li>The script is **fetched** in parallel with HTML parsing.</li>
+            <li>HTML parsing **continues** while the script is downloading.</li>
+            <li>As soon as the script is **downloaded**, HTML parsing **pauses** briefly to **execute** the script.</li>
+            <li>After execution, HTML parsing **resumes**.</li>
+        </ul>
+        <p>The order of execution for multiple `async` scripts is **not guaranteed**; they execute as soon as they finish downloading. This is ideal for independent scripts (e.g., analytics, third-party widgets) that don't depend on other scripts or the full DOM structure.</p>
+
+        <h3>Example Code:</h3>
+        <div class="code-snippet">
+            &lt;!-- In the &lt;head&gt; or &lt;body&gt; --&gt;<br>
+            &lt;script src="async-script.js" async&gt;&lt;/script&gt;<br>
+            &lt;div id="output-async" class="output-box"&gt;<br>
+            &nbsp;&nbsp;Output from Async Script:<br>
+            &lt;/div&gt;
+        </div>
+        <div id="output-async" class="output-box">
+            Output from Async Script:
+        </div>
+
+        <script>
+            /*
+             * This simulates an async external JavaScript file.
+             * In a real scenario, this would be a separate file (e.g., async-script.js).
+             * We're simulating its behavior directly here for demonstration.
+             */
+            console.log("Async Script: Started fetching (HTML parsing continues).");
+
+            // Simulate a network delay for fetching
+            setTimeout(() => {
+                console.log("Async Script: Downloaded. HTML parsing pauses for execution.");
+                const asyncOutputDiv = document.getElementById('output-async');
+                if (asyncOutputDiv) {
+                    asyncOutputDiv.innerHTML += "<br>Async Script: Executed. DOM content might not be fully ready.";
+                }
+                console.log("Async Script: Finished execution. HTML parsing resumes.");
+            }, 300); // Simulate 300ms download time
+        </script>
+        <p>This paragraph appears after the `async` script tag, but might be parsed before the script executes.</p>
+    </div>
+
+    ---
+
+    <h2>3. `defer` Script Loading</h2>
+    <div class="section-container">
+        <p>The `defer` attribute tells the browser to **fetch the script asynchronously** (in parallel with HTML parsing) but to **execute it only after the HTML document has been fully parsed** (just before the `DOMContentLoaded` event fires).</p>
+        <ul>
+            <li>The script is **fetched** in parallel with HTML parsing.</li>
+            <li>HTML parsing **continues** while the script is downloading.</li>
+            <li>The script's **execution** is deferred until the entire HTML document is parsed.</li>
+            <li>`defer` scripts execute in the **order they appear** in the document.</li>
+        </ul>
+        <p>This is ideal for scripts that depend on the full DOM being ready and/or depend on other scripts, as it ensures the DOM is available and scripts execute in a predictable order. It's often preferred over `async` for most application-specific JavaScript.</p>
+
+        <h3>Example Code:</h3>
+        <div class="code-snippet">
+            &lt;!-- In the &lt;head&gt; or &lt;body&gt; --&gt;<br>
+            &lt;script src="defer-script.js" defer&gt;&lt;/script&gt;<br>
+            &lt;div id="output-defer" class="output-box"&gt;<br>
+            &nbsp;&nbsp;Output from Defer Script:<br>
+            &lt;/div&gt;
+        </div>
+        <div id="output-defer" class="output-box">
+            Output from Defer Script:
+        </div>
+
+        <script>
+            /*
+             * This simulates a defer external JavaScript file.
+             * In a real scenario, this would be a separate file (e.g., defer-script.js).
+             * We're simulating its behavior directly here for demonstration.
+             */
+            console.log("Defer Script: Started fetching (HTML parsing continues).");
+
+            // Simulate a network delay for fetching
+            setTimeout(() => {
+                console.log("Defer Script: Downloaded. Waiting for HTML parsing to complete for execution.");
+                // This code will run AFTER the HTML parsing is complete.
+                const deferOutputDiv = document.getElementById('output-defer');
+                if (deferOutputDiv) {
+                    deferOutputDiv.innerHTML += "<br>Defer Script: Executed. DOM is fully parsed.";
+                }
+                console.log("Defer Script: Finished execution.");
+            }, 400); // Simulate 400ms download time
+        </script>
+        <p>This paragraph appears after the `defer` script tag, and will always be parsed and available before the `defer` script executes.</p>
+    </div>
+
+    ---
+
+    <h2>Summary of Differences</h2>
+    <div class="section-container" style="text-align: center; background-color: #e6f7ff; border: 1px solid #91d5ff;">
+        <p>
+            The choice of script loading mechanism depends on your script's dependencies and its impact on page rendering.
+        </p>
+        <p>
+            <strong>Standard (Blocking):</strong> Pauses HTML parsing for fetch and execution. Oldest, can cause jank.
+        </p>
+        <p>
+            <strong>`async`</strong>: Fetches in parallel, executes as soon as downloaded (pauses HTML briefly). Order not guaranteed. Good for independent scripts.
+        </p>
+        <p>
+            <strong>`defer`</strong>: Fetches in parallel, executes *after* HTML parsing is complete. Order guaranteed. Best for most application scripts that rely on the DOM.
+        </p>
+        <p>
+            For optimal performance and user experience, generally prefer `defer` for your main application scripts and `async` for third-party, independent scripts. Avoid standard blocking scripts in the `<body>` unless absolutely necessary.
+        </p>
+    </div>
+
+</body>
+</html>
