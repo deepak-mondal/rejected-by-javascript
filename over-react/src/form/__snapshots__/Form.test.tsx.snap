@@ -1,0 +1,46 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Form tests > should be able to type in the input box 1`] = `
+<div>
+  <form
+    data-testid="form"
+  >
+    <input
+      aria-label="enter-todos"
+      data-testid="input-box"
+      value="test"
+    />
+    <button
+      data-testid="button"
+      type="submit"
+    >
+      Add
+    </button>
+    <select
+      aria-label="select-todos"
+      data-testid="select-box"
+    >
+      <option
+        data-testid="option"
+      >
+        text 1
+      </option>
+      <option
+        data-testid="option"
+      >
+        text 2
+      </option>
+      <option
+        data-testid="option"
+      >
+        text 3
+      </option>
+      <option
+        data-testid="option"
+      >
+        text 4
+      </option>
+    </select>
+  </form>
+</div>
+`;
